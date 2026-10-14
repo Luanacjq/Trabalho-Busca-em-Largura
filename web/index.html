@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Busca em Largura · Rede Social</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <header class="topo">
+    <div class="marca">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 40 40"><circle cx="20" cy="8" r="5"/><circle cx="8" cy="30" r="5"/><circle cx="32" cy="30" r="5"/><path d="M20 13 L9 26 M20 13 L31 26 M13 30 H27"/></svg>
+      </div>
+      <div>
+        <h1>Busca em Largura</h1>
+        <p>Menor caminho entre alunos da turma</p>
+      </div>
+    </div>
+    <div class="acoes-topo">
+      <span class="chip-arquivo" id="nomeArquivo">carregando…</span>
+      <label class="btn btn-fantasma">
+        <input type="file" id="inputArquivo" accept=".json,application/json" hidden>
+        Carregar rede
+      </label>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Controles -->
+    <section class="card controles entrar" style="--d:0">
+      <h2>Entrada</h2>
+      <label class="campo quantidade">
+        <span>Quantidade de alunos <b><span id="qtdTxt">30</span> / <span id="qtdMax">30</span></b></span>
+        <input type="range" id="quantidade" min="2" max="30" step="1" value="30">
+        <small>Usa os primeiros alunos do arquivo (máximo 30, a turma toda).</small>
+      </label>
+      <label class="campo">
+        <span>Usuário de partida</span>
+        <select id="origem"></select>
+      </label>
+      <button class="btn-trocar" id="trocar" title="Inverter origem e destino" aria-label="Inverter origem e destino">⇅</button>
+      <label class="campo">
+        <span>Usuário de chegada</span>
+        <select id="destino"></select>
+      </label>
+
+      <button class="btn btn-primario" id="buscar">
+        <span class="brilho"></span>Encontrar caminho
+      </button>
+      <button class="btn btn-secundario" id="distantes">Usuários mais distantes</button>
+
+      <label class="campo velocidade">
+        <span>Velocidade da animação <b id="velTxt">1×</b></span>
+        <input type="range" id="velocidade" min="0.25" max="4" step="0.25" value="1">
+      </label>
+      <button class="btn btn-fantasma largo" id="limpar">Limpar</button>
+
+      <p class="dica">Dica: clique em um aluno no grafo para escolher a origem e, no segundo clique, o destino. Você pode arrastar os nós.</p>
+    </section>
+
+    <!-- Grafo -->
+    <section class="card palco entrar" style="--d:1">
+      <canvas id="tela"></canvas>
+      <div class="legenda">
+        <span><i class="bola origem"></i>Partida</span>
+        <span><i class="bola destino"></i>Chegada</span>
+        <span><i class="bola fila"></i>Na fila</span>
+        <span><i class="bola visitado"></i>Visitado</span>
+        <span><i class="linha"></i>Caminho</span>
+      </div>
+      <div class="tooltip" id="tooltip"></div>
+      <div class="status" id="status">Escolha dois alunos e clique em <b>Encontrar caminho</b></div>
+    </section>
+
+    <!-- Resultados -->
+    <section class="card resultados entrar" style="--d:2">
+      <h2>Saída</h2>
+      <div class="stats">
+        <div class="stat"><span class="num" id="sAlunos">0</span><span class="rot">alunos</span></div>
+        <div class="stat"><span class="num" id="sAmizades">0</span><span class="rot">amizades</span></div>
+        <div class="stat destaque"><span class="num" id="sDistancia">–</span><span class="rot">distância</span></div>
+        <div class="stat rosa"><span class="num" id="sDiametro">–</span><span class="rot">maior distância</span></div>
+      </div>
+
+      <h3>Caminho mais curto</h3>
+      <div class="caminho" id="caminho"><span class="vazio">nenhum ainda</span></div>
+
+      <h3>Fila da BFS <small>(FIFO)</small></h3>
+      <div class="fila" id="fila"><span class="vazio">vazia</span></div>
+
+      <h3>Níveis a partir da origem</h3>
+      <div class="niveis" id="niveis"><span class="vazio">execute uma busca</span></div>
+
+      <h3>Mais distantes</h3>
+      <div class="pares" id="pares"><span class="vazio">clique em “Usuários mais distantes”</span></div>
+
+      <h3>Passo a passo</h3>
+      <ol class="log" id="log"></ol>
+    </section>
+  </main>
+
+  <!-- Aviso quando o arquivo não pode ser lido automaticamente -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-caixa">
+      <h2>Selecione o arquivo da rede</h2>
+      <p>O navegador bloqueia a leitura automática de arquivos quando a página é aberta direto do disco.
+        Arraste o <code>rede_social.json</code> para cá ou escolha-o abaixo.</p>
+      <p class="pequeno">Para carregar sozinho, rode <code>python iniciar_front.py</code> na pasta do projeto.</p>
+      <label class="btn btn-primario">
+        <input type="file" id="inputModal" accept=".json,application/json" hidden>
+        Escolher arquivo
+      </label>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
